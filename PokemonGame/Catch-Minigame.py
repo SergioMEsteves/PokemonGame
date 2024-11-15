@@ -1,10 +1,23 @@
 import tkinter as tk
-from PIL import Image, ImageTk, ImageDraw #! Might not work on all devices as required Pillow installed: pip install pillow
 import random
-import pygame #! pygame intalled from CL
+
+try: # Ensuring installation
+    from PIL import Image, ImageTk, ImageDraw
+except ImportError:
+    print("Pillow is not installed. Installing it now...")
+    import os
+    os.system('pip install Pillow')
+    from PIL import Image, ImageTk, ImageDraw
+try:
+    import pygame
+except ImportError:
+    print("pygame is not installed. Installing it now...")
+    import os
+    os.system('pip install pygame')
+    import pygame
 
 class PokemonCatchMiniGame(tk.Tk):
-    tolerance = 10 #? CHANGE AS NEEDED ; impacts how easy it is to win the minigame
+    tolerance = 10 # CHANGE AS NEEDED ; impacts how easy it is to win the minigame
 
     def __init__(self, pokeName):
         super().__init__()
@@ -205,8 +218,8 @@ class PokemonCatchMiniGame(tk.Tk):
             self.canvas.create_text(650, 300, text="Pokemon Caught!", fill="green", font=("Arial", 24))
             self.after_cancel(self.after_id)
 
-            #!button = tk.Button(self.canvas, text="OK", font=("Arial", 14), command=self.quit_fullscreen)
-            #!self.canvas.create_window(650, 550, window=button)  # Position the button at coordinates (650, 550)
+            button = tk.Button(self.canvas, text="OK", font=("Arial", 14), command=self.quit_fullscreen)
+            button.pack()
             return
 
         # If clicked at the wrong time or ran out of Pokéballs
@@ -217,8 +230,8 @@ class PokemonCatchMiniGame(tk.Tk):
             self.canvas.create_text(650, 300, text=f"Out of Pokeballs! {self.pokeName} escaped!", fill="red", font=("Arial", 24))
             self.after_cancel(self.after_id)
 
-            #!button = tk.Button(self.canvas, text="OK", font=("Arial", 14), command=self.quit_fullscreen)
-            #!self.canvas.create_window(650, 550, window=button)  # Position the button at coordinates (650, 550)
+            button = tk.Button(self.canvas, text="OK", font=("Arial", 14), command=self.quit_fullscreen)
+            button.pack()
             return
 
         # If the Pokéball count is still > 0, show the remaining count
