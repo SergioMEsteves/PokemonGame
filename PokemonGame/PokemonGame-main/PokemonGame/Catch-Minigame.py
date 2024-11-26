@@ -106,7 +106,7 @@ class PokemonCatchMiniGame(tk.Tk):
             self.pokeballs_left = 5  # FIXME temporarily hardcoded to 5
 
             # Loading the pokeball image
-            self.pokeImage = self.resize(Image.open("Pokemon-Assets/Sprites/pokeball.png"), self.winfo_height()//16)
+            self.pokeImage = self.resize(Image.open("Pokemon-Assets/Sprites/pokeball.png"), self.winfo_height() // 16)
             pokeball = ImageTk.PhotoImage(self.pokeImage)
 
             # Adding pokeballs to top right
