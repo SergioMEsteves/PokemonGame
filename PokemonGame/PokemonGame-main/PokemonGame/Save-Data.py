@@ -32,6 +32,7 @@ class TrainerSave:
             self.name = None
 
     def set_save_name(self, name):
+        '''Sets save file name'''
         self.name = name
 
     def append_pokemon(self, pokemon):

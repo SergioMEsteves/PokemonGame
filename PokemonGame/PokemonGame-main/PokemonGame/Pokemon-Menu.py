@@ -50,6 +50,20 @@ class GameMenu(tk.Tk):
 
         pixel_font = ("Press Start 2P", 14) # Doesn't actually work just sets sizes for buttons.
 
+        self.saves_button = tk.Button(
+            self,
+            text="Saves",
+            font=pixel_font,
+            fg="yellow",
+            bg="#355C7D",
+            activebackground="#6C5B7B",
+            relief="ridge",
+            bd=5,  # A thicker border
+            highlightthickness=2,
+            highlightbackground="#222",  # Dark border to blend with the darkened background
+            command=self.load_saves
+        )
+
         self.start_button = tk.Button(
             self,
             text="New Game!",
@@ -104,6 +118,8 @@ class GameMenu(tk.Tk):
         def on_leave(e):
             e.widget['bg'] = '#355C7D'  # Revert to original color
 
+        self.saves_button.bind("<Enter>", on_enter)
+        self.saves_button.bind("<Leave>", on_leave)
         self.start_button.bind("<Enter>", on_enter)
         self.start_button.bind("<Leave>", on_leave)
         self.quit_button.bind("<Enter>", on_enter)
@@ -196,6 +212,9 @@ class GameMenu(tk.Tk):
         if self.instructions_overlay:
             self.instructions_overlay.destroy()
             self.instructions_overlay = None
+
+    def load_saves(selfs):
+        pass
 
     def start_game(self):
         """
