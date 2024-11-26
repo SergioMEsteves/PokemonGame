@@ -78,7 +78,7 @@ def main(saveFile):
     player_pos = [WIDTH // 2, HEIGHT // 2]  # Center player on screen (50 is half the player's width/height)
 
     # Cooldown setup
-    COOLDOWN = 100  # Cooldown in milliseconds (1000 ms / 3 moves per second)
+    COOLDOWN = 200  # Cooldown in milliseconds (1000 ms / 5 moves per second)
     last_move_time = 0  # Initialize the last move time
 
     # Function to get the image for a tile type
