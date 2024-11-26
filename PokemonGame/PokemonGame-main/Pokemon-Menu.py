@@ -1,9 +1,10 @@
 import tkinter as tk
-from tkinter import simpledialog
 import Pokemon_Game
 from TrainerSave import TrainerSave
 from functools import partial
-import os
+from random import choice
+from PokemonData import POKEMON_DATA
+from Pokemon import Pokemon
 try: # Ensuring installation
     from PIL import Image, ImageTk, ImageEnhance
 except ImportError:
@@ -312,6 +313,10 @@ class GameMenu(tk.Tk):
 
         pygame.mixer.music.stop()
         self.quit_game()
+        if len(self.selected_save.pokemon_list) == 0:
+            pokemon = Pokemon(choice(list(POKEMON_DATA.items()))[1][0].lower())
+            print(pokemon.nickname)
+            self.selected_save.append_pokemon(pokemon)
         Pokemon_Game.main(self.selected_save)
 
     def quit_game(self):
