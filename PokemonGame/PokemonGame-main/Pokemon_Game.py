@@ -187,6 +187,9 @@ def main(saveFile):
             Starts the catching minigame
             """
 
+
+            nonlocal candy_count, pc_box
+
             pygame.mixer.music.stop()
             game = CatchMinigame.PokemonCatchMiniGame(pokemon.nickname.lower())
             game.start_game()
@@ -227,7 +230,7 @@ def main(saveFile):
         while True:
             randx = randint(6, 23)
             randy = randint(6, 15)
-            if game_map[randy][randx] != 'T' and game_map[randy][randx] != 'S':
+            if game_map[randy][randx] != 'T' and game_map[randy][randx] != 'S' and is_walkable(randx,randy):
                 break
         pokemonOnScreen.append([Pokemon(pokemon_data[0].lower()), randx, randy])
         threading.Timer(5, generateEncounter).start()
