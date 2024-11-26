@@ -21,7 +21,6 @@ class PokemonCatchMiniGame(tk.Tk):
 
     def __init__(self, pokeName):
         super().__init__()
-        print('in here its', pokeName)
         # Window setup
         self.title("Pokemon Catching Game")
         self.attributes("-fullscreen", True)  # Enable fullscreen
