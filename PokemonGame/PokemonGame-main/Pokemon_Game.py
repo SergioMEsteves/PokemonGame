@@ -2,6 +2,8 @@ import pygame
 import sys
 import os
 from random import randint, choice
+
+
 from Pokemon import Pokemon
 from PokemonData import POKEMON_DATA
 from TrainerSave import TrainerSave
@@ -9,10 +11,7 @@ import threading
 import CatchMinigame
 
 def main(saveFile):
-<<<<<<< HEAD
 
-=======
->>>>>>> 3868b610f25f21596376b8d9158b293229a73ef6
     # Initialize Pygame
     pygame.init()
 
@@ -171,10 +170,9 @@ def main(saveFile):
             Starts the catching minigame
             """
 
-<<<<<<< HEAD
+
             nonlocal candy_count, pc_box
-=======
->>>>>>> 3868b610f25f21596376b8d9158b293229a73ef6
+
             pygame.mixer.music.stop()
             game = CatchMinigame.PokemonCatchMiniGame(pokemon.nickname.lower())
             game.start_game()
@@ -216,7 +214,7 @@ def main(saveFile):
         while True:
             randx = randint(6, 23)
             randy = randint(6, 15)
-            if game_map[randy][randx] != 'T' and game_map[randy][randx] != 'S':
+            if game_map[randy][randx] != 'T' and game_map[randy][randx] != 'S' and is_walkable(randx, randy):
                 break
         pokemonOnScreen.append([Pokemon(pokemon_data[0].lower()), randx, randy])
         threading.Timer(5, generateEncounter).start()
