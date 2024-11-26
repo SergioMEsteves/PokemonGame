@@ -221,6 +221,7 @@ class GameMenu(tk.Tk):
             self.instructions_overlay = None
 
     def show_saves(self):
+        """ Shows window with available save games"""
         if self.saves_overlay:
             return
         self.saves_overlay = tk.Canvas(self, bg="black", width=self.winfo_screenwidth(),
@@ -244,16 +245,19 @@ class GameMenu(tk.Tk):
         close_button.pack(padx=10, pady=10, anchor="ne")
 
     def load_saves(selfs):
+        """ Loads all saves from dir below: """
         path = './Saves/'
         return [TrainerSave(path + f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
 
     def loadPokemonData(filePath='PokeList_v3.csv'):
+        """ Loads data from pokemon list file """
         with open(filePath, 'r') as csv:
             lines = csv.readlines()
             data = dict([(l.split(',')[1], tuple([e.strip() for e in l.split(',')[1:]])) for l in lines])
         return data
 
     def select_save(self, save):
+        """ Selects Save"""
         print(save.name)
         self.selected_save = save
         self.close_saves()
@@ -309,7 +313,7 @@ class GameMenu(tk.Tk):
         self.destroy()
 
     def on_resize(self, event):
-
+        """Runs when window resized"""
         # Place title image directly on the canvas (no background box)
         self.title_image_id = self.canvas.create_image(self.winfo_screenwidth() // 2, self.winfo_screenheight() // 4, image=self.title)
 

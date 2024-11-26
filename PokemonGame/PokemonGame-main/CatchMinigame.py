@@ -61,6 +61,8 @@ class PokemonCatchMiniGame(tk.Tk):
         self.bind("<Escape>", self.quit_fullscreen)
 
     def draw_semi_transparent_ring(self):
+                """ Draws the target ring for the minigame """
+
                 # Create a transparent image to draw on
                 image = Image.new("RGBA", (1300, 1000), (0, 0, 0, 0))  # transparent background
                 draw = ImageDraw.Draw(image)
