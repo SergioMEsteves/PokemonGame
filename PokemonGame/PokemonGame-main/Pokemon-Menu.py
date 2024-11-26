@@ -1,4 +1,5 @@
 import tkinter as tk
+import Pokemon_Game
 try: # Ensuring installation
     from PIL import Image, ImageTk, ImageEnhance
 except ImportError:
@@ -13,7 +14,6 @@ except ImportError:
     import os
     os.system('pip install pygame')
     import pygame
-import subprocess
 
 class GameMenu(tk.Tk):
     def __init__(self):
@@ -255,6 +255,9 @@ class GameMenu(tk.Tk):
         Starts the catching minigame
         """
         pygame.mixer.music.stop()
+        self.quit_game()
+        Pokemon_Game.main()
+
 
     def quit_game(self):
         """

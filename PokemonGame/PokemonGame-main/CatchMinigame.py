@@ -21,7 +21,7 @@ class PokemonCatchMiniGame(tk.Tk):
 
     def __init__(self, pokeName):
         super().__init__()
-
+        print('in here its', pokeName)
         # Window setup
         self.title("Pokemon Catching Game")
         self.attributes("-fullscreen", True)  # Enable fullscreen
@@ -37,6 +37,7 @@ class PokemonCatchMiniGame(tk.Tk):
         self.ball_y = 0
         self.is_animation_paused = True
         self.pokeballs_on_screen = [] # Will keep track of balls to delete later
+        self.success=False
 
         # Load background image
         self.load_background(
@@ -165,10 +166,7 @@ class PokemonCatchMiniGame(tk.Tk):
             
             # Convert the resized image back to PhotoImage to display it in Tkinter
             self.bg_image = ImageTk.PhotoImage(background_resized)
-
-            # Update the background image on the canvas
             self.canvas.itemconfig(self.canvas.find_all()[0], image=self.bg_image)
-
             self.loadPokeballs()
             self.loadPokemon(self.pokeName)
             self.draw_semi_transparent_ring()
@@ -181,7 +179,7 @@ class PokemonCatchMiniGame(tk.Tk):
         # Initialize pygame mixer
         pygame.mixer.init()
         pygame.mixer.music.load(
-            "./Pokemon-Assets/Sounds/Music/Battle-Pokemon.mp3")  # Plays music
+            "./Pokemon-Assets/Sounds/Music/Battle-Trainer.mp3")  # Plays music
         pygame.mixer.music.play(-1)  # -1 loops the music indefinitely
 
     def animate_ring(self):
@@ -249,7 +247,7 @@ class PokemonCatchMiniGame(tk.Tk):
                 int(self.winfo_height() * 0.4),  # Adjust this value to position the button lower or higher
                 window=button
             )
-            return
+            self.success=True
 
         # If clicked at the wrong time or ran out of Pokéballs
         if self.pokeballs_left <= 0:
@@ -266,7 +264,7 @@ class PokemonCatchMiniGame(tk.Tk):
                 int(self.winfo_height() * 0.5),  # Adjust this value to position the button lower or higher
                 window=button
             )
-            return
+            self.success=False
 
         # If the Pokéball count is still > 0, show the remaining count
         if self.pokeballs_left > 0:
@@ -327,9 +325,3 @@ class PokemonCatchMiniGame(tk.Tk):
         print("Exiting the game...")
         self.quit()  # This stops the Tkinter mainloop and closes the app
         self.destroy()  # This ensures all resources are cleaned up
-
-# Start the game
-if __name__ == "__main__":
-    game = PokemonCatchMiniGame("squirtle")
-    game.start_game()
-    game.mainloop()
