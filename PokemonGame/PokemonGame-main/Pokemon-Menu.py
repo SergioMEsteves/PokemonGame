@@ -206,7 +206,8 @@ class GameMenu(tk.Tk):
 
         Once you are in the game:
         Use the arrow keys to move around! 
-        Hold "I" to see the pokemon in your inventory, and press "S" to save your game
+        Press "I" to see the pokemon in your inventory, and press "Escape" to close it!
+        Press "S" to save your game
         Run into a pokemon to attempt to catch it!
 
         To catch a pokemon:

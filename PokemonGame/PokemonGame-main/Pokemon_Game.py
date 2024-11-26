@@ -150,15 +150,19 @@ def main(saveFile):
 
     # Handle movement between PC boxes
     def navigate_pc_menu():
-        nonlocal selected_pokemon_index, current_box_index, displayInfo
+        nonlocal selected_pokemon_index, current_box_index, displayInfo, last_move_time, current_time
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
+            last_move_time = current_time
             selected_pokemon_index = (selected_pokemon_index - BOX_COL_COUNT) % BOX_COUNT
         elif keys[pygame.K_DOWN]:
+            last_move_time = current_time
             selected_pokemon_index = (selected_pokemon_index + BOX_COL_COUNT) % BOX_COUNT
         elif keys[pygame.K_LEFT]:
+            last_move_time = current_time
             selected_pokemon_index = (selected_pokemon_index - 1) % BOX_COUNT
         elif keys[pygame.K_RIGHT]:
+            last_move_time = current_time
             selected_pokemon_index = (selected_pokemon_index + 1) % BOX_COUNT
         elif keys[pygame.K_RETURN]:
             displayInfo = True
@@ -313,7 +317,7 @@ def main(saveFile):
 
             # Handle PC box menu
             if inventoryShowing:
-                if current_time - last_move_time > COOLDOWN*5:
+                if current_time - last_move_time > COOLDOWN:
                     if not navigate_pc_menu():
                         inventoryShowing = False  # Exit PC box menu
             else:
