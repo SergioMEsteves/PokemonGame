@@ -5,11 +5,11 @@ from functools import partial
 from random import choice
 from PokemonData import POKEMON_DATA
 from Pokemon import Pokemon
+import os
 try: # Ensuring installation
     from PIL import Image, ImageTk, ImageEnhance
 except ImportError:
     print("Pillow is not installed. Installing it now...")
-    import os
     os.system('pip install Pillow')
     from PIL import Image, ImageTk, ImageEnhance
 try:
