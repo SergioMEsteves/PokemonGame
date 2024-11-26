@@ -39,7 +39,8 @@ class PokemonCatchMiniGame(tk.Tk):
         self.pokeballs_on_screen = [] # Will keep track of balls to delete later
 
         # Load background image
-        self.load_background("Pokemon-Assets/Forest-Background.jpg")
+        self.load_background(
+            "./Pokemon-Assets/Forest-Background.jpg")
 
         # Ring settings
         self.max_ring_size = 0
@@ -106,7 +107,8 @@ class PokemonCatchMiniGame(tk.Tk):
             self.pokeballs_left = 5  # FIXME temporarily hardcoded to 5
 
             # Loading the pokeball image
-            self.pokeImage = self.resize(Image.open("Pokemon-Assets/Sprites/pokeball.png"), self.winfo_height() // 16)
+            self.pokeImage = self.resize(Image.open(
+                "./Pokemon-Assets/Sprites/pokeball.png"), self.winfo_height() // 16)
             pokeball = ImageTk.PhotoImage(self.pokeImage)
 
             # Adding pokeballs to top right
@@ -178,7 +180,8 @@ class PokemonCatchMiniGame(tk.Tk):
 
         # Initialize pygame mixer
         pygame.mixer.init()
-        pygame.mixer.music.load("Pokemon-Assets/Sounds/Music/Battle-Pokemon.mp3")  # Plays music
+        pygame.mixer.music.load(
+            "./Pokemon-Assets/Sounds/Music/Battle-Pokemon.mp3")  # Plays music
         pygame.mixer.music.play(-1)  # -1 loops the music indefinitely
 
     def animate_ring(self):
@@ -232,7 +235,8 @@ class PokemonCatchMiniGame(tk.Tk):
         if abs(self.current_size - self.catch_radius) <= self.tolerance:  # A small tolerance for timing
             # Catch was successful
             pygame.mixer.music.stop()
-            pygame.mixer.music.load("Pokemon-Assets/Sounds/Music/Victory-Pokemon.mp3")  # Victory music
+            pygame.mixer.music.load(
+                "./Pokemon-Assets/Sounds/Music/Victory-Pokemon.mp3")  # Victory music
             pygame.mixer.music.play(-1)  # -1 loops the music indefinitely
 
             self.game_running = False
@@ -250,7 +254,8 @@ class PokemonCatchMiniGame(tk.Tk):
         # If clicked at the wrong time or ran out of Pokéballs
         if self.pokeballs_left <= 0:
             pygame.mixer.music.stop()
-            pygame.mixer.Sound("Pokemon-Assets/Sounds/Effects/loose.mp3").play()
+            pygame.mixer.Sound(
+                "./Pokemon-Assets/Sounds/Effects/loose.mp3").play()
             self.game_running = False
             self.canvas.create_text(self.winfo_width()//2, int(self.winfo_height()*0.4), text=f"Out of Pokeballs! {self.pokeName} escaped!", fill="red", font=("Arial", 24))
 

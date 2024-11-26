@@ -6,7 +6,8 @@ pygame.init()
 
 # Initialize pygame mixer for background music
 pygame.mixer.init()
-pygame.mixer.music.load("Pokemon-Assets/Sounds/Music/Game-Background.mp3")  # Path to your music
+pygame.mixer.music.load(
+    "./Pokemon-Assets/Sounds/Music/Game-Background.mp3")  # Path to your music
 pygame.mixer.music.play(-1)  # -1 loops the music indefinitely
 
 # Set up display
@@ -32,14 +33,17 @@ playery=7
 TILE_SIZE = 80
 
 # Load background image (Make sure the image dimensions match your window)
-background_image = pygame.image.load("Pokemon-Assets/Game-Background.jpg")
+background_image = pygame.image.load(
+    "./Pokemon-Assets/Game-Background.jpg")
 background_image = pygame.transform.scale(background_image, (800, 600))
 
-tree_image = pygame.image.load("Pokemon-Assets/Sprites/tree.png")
+tree_image = pygame.image.load(
+    "./Pokemon-Assets/Sprites/tree.png")
 tree_image = pygame.transform.scale(tree_image, (TILE_SIZE, TILE_SIZE))
 
 # Load player image
-player_image = pygame.image.load("Pokemon-Assets\Sprites\Player-Temp-Image.png")
+player_image = pygame.image.load(
+    "./Pokemon-Assets/Sprites/Player-Temp-Image.png")
 player_image = pygame.transform.scale(player_image, (100, 100))  # Scale to match tile size
 
 # Player setup (fixed position in the center of the screen)

@@ -45,14 +45,15 @@ class GameMenu(tk.Tk):
         self.load_background_image(self.image_paths[self.current_image_index])
 
         # Load title image
-        self.title_image = Image.open("Pokemon-Assets/Sprites/pokemonTitle.png")
+        self.title_image = Image.open(
+            "./Pokemon-Assets/Sprites/pokemonTitle.png")
         self.title = ImageTk.PhotoImage(self.title_image)
 
         pixel_font = ("Press Start 2P", 14) # Doesn't actually work just sets sizes for buttons.
 
         self.saves_button = tk.Button(
             self,
-            text="Saves",
+            text="Select Save",
             font=pixel_font,
             fg="yellow",
             bg="#355C7D",
@@ -61,7 +62,7 @@ class GameMenu(tk.Tk):
             bd=5,  # A thicker border
             highlightthickness=2,
             highlightbackground="#222",  # Dark border to blend with the darkened background
-            command=self.load_saves
+            command=self.show_saves
         )
 
         self.start_button = tk.Button(
@@ -92,8 +93,6 @@ class GameMenu(tk.Tk):
             command=self.quit_game
         )
 
-         # Create an Instructions Button
-        
         self.instructions_button = tk.Button(
             self,
             text="Instructions",
@@ -108,10 +107,11 @@ class GameMenu(tk.Tk):
             command=self.show_instructions
         )
 
-        # Instructions overlay frame (Initially hidden)
+        # Initially hidden Overlay frames
         self.instructions_overlay = None
+        self.saves_overlay = None
 
-        # BELOW: adding hover animations to buttons
+        # Hover animations to buttons
         def on_enter(e):
             e.widget['bg'] = '#6C5B7B'  # Change to a brighter color on hover
 
@@ -129,7 +129,8 @@ class GameMenu(tk.Tk):
 
         # Initialize pygame mixer for background music
         pygame.mixer.init()
-        pygame.mixer.music.load("Pokemon-Assets/Sounds/Music/Background.mp3")  # Path to your music
+        pygame.mixer.music.load(
+            "./Pokemon-Assets/Sounds/Music/Background.mp3")  # Path to your music
         pygame.mixer.music.play(-1)  # -1 loops the music indefinitely
 
         # Start the zoom-out animation
@@ -212,6 +213,11 @@ class GameMenu(tk.Tk):
         if self.instructions_overlay:
             self.instructions_overlay.destroy()
             self.instructions_overlay = None
+
+    def show_saves(self):
+        if self.saves_overlay:
+            return
+
 
     def load_saves(selfs):
         pass
