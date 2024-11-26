@@ -202,7 +202,7 @@ def main(saveFile):
                 randnum -= randnum%5
                 if randnum == 0: randnum = 3
                 nonlocal candy_count
-                candy_count += randnum
+                candy_count = str(int(candy_count) + randnum)
 
     def move(dx, dy):
         """ Function to move the camera """
