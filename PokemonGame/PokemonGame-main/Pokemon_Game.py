@@ -9,7 +9,6 @@ import threading
 import CatchMinigame
 
 def main(saveFile):
-    global candy_count
 
     # Initialize Pygame
     pygame.init()
@@ -18,10 +17,10 @@ def main(saveFile):
 
     # Load the Candy image
     candy_image = pygame.image.load('Pokemon-Assets/Sprites/candy.png')
-    candy_image = pygame.transform.scale(candy_image, (32, 32)) 
+    candy_image = pygame.transform.scale(candy_image, (32, 32))
 
     # Track the number of candies
-    candy_count = 10 
+    candy_count = 10
 
     # Initialize pygame mixer for background music
     pygame.mixer.init()
@@ -78,8 +77,70 @@ def main(saveFile):
     player_pos = [WIDTH // 2, HEIGHT // 2]  # Center player on screen (50 is half the player's width/height)
 
     # Cooldown setup
-    COOLDOWN = 100  # Cooldown in milliseconds (1000 ms / 3 moves per second)
+    COOLDOWN = 200  # Cooldown in milliseconds (1000 ms / 3 moves per second)
     last_move_time = 0  # Initialize the last move time
+
+    # PC Box Variables
+    pc_box = []
+    current_box_index = 0
+    selected_pokemon_index = 0
+    BOX_ROW_COUNT = 5
+    BOX_COL_COUNT = 6
+    BOX_COUNT = BOX_COL_COUNT * BOX_ROW_COUNT
+
+    def generate_pc_box(index):
+        '''Populates the PC box with Pokemon from the players collection'''
+        box = []
+
+        for i in range(BOX_COUNT * index, BOX_COUNT * (index + 1) + 1):
+             if i < len(saveFile.pokemon_list):
+                 box.append(saveFile.pokemon_list[i])
+             else:
+                 box.append(None)
+        return box
+
+    def draw_pc_box():
+        '''Draws the PC box with Pokemon within it'''
+        screen.fill((255, 255, 255))
+        y_offset = 50
+        x_offset = 50
+        for i in range(BOX_ROW_COUNT):
+            for j in range(BOX_COL_COUNT):
+                index = i * BOX_COL_COUNT + j
+                pokemon = pc_box[index]
+                rect = pygame.Rect(x_offset + j * TILE_SIZE, y_offset + i * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+                pygame.draw.rect(screen, LIGHT_BLUE, rect)
+                if pokemon:
+                    pokemon_sprite = pygame.image.load(
+                        f"Pokemon-Assets/Sprites/Pokemon/{pokemon.pokemon_data[0].lower()}.png")
+                    pokemon_sprite = pygame.transform.scale(pokemon_sprite, (TILE_SIZE, TILE_SIZE))
+                    screen.blit(pokemon_sprite, rect.topleft)
+
+                if index == selected_pokemon_index:
+                    pygame.draw.rect(screen, (0, 255, 0), rect, 5)
+
+    # Handle movement between PC boxes
+    def navigate_pc_menu():
+        nonlocal selected_pokemon_index, current_box_index
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_UP]:
+            selected_pokemon_index = (selected_pokemon_index - BOX_COL_COUNT) % BOX_COUNT
+        elif keys[pygame.K_DOWN]:
+            selected_pokemon_index = (selected_pokemon_index + BOX_COL_COUNT) % BOX_COUNT
+        elif keys[pygame.K_LEFT]:
+            selected_pokemon_index = (selected_pokemon_index - 1) % BOX_COUNT
+        elif keys[pygame.K_RIGHT]:
+            selected_pokemon_index = (selected_pokemon_index + 1) % BOX_COUNT
+        elif keys[pygame.K_RETURN]:
+            # Select the Pokémon if there is one
+            selected_pokemon = pc_box[selected_pokemon_index]
+            if selected_pokemon:
+                print(f"Selected {selected_pokemon.nickname}")
+        elif keys[pygame.K_ESCAPE]:
+            # Exit the PC box and go back to the main game
+            return False  # Returning False means the menu should close
+        return True
 
     # Function to get the image for a tile type
     def get_tile_image(tile_type):
@@ -97,7 +158,7 @@ def main(saveFile):
             Starts the catching minigame
             """
 
-            global candy_count
+            nonlocal candy_count, pc_box
             pygame.mixer.music.stop()
             game = CatchMinigame.PokemonCatchMiniGame(pokemon.nickname.lower())
             game.start_game()
@@ -110,6 +171,7 @@ def main(saveFile):
                 randnum -= randnum%5
                 if randnum == 0: randnum = 3
                 candy_count += randnum
+                pc_box = generate_pc_box(0)
 
     # Function to move the camera
     def move(dx, dy):
@@ -147,31 +209,11 @@ def main(saveFile):
         nonlocal n
         n = (n+1)%4
 
-    def draw_inventory(pokemon_list):
-        """ Displays inventory """
-        x_offset = 50
-        y_offset = 100
-        for i, pokemon in enumerate(pokemon_list):
-            # Draw the Pokémon card background
-            pygame.draw.rect(screen, LIGHT_BLUE, (x_offset, y_offset + i * 70, 200, 60))
-            
-            # Draw the sprite
-            screen.blit(pygame.transform.scale(pygame.image.load(f"Pokemon-Assets/Sprites/Pokemon/{pokemon.pokemon_data[0].lower()}.png"), (50, 50)), (x_offset + 5, y_offset + i * 70 + 5))
-
-            # Draw the text (Name, Level, Combat Power)
-            name_text = font.render(pokemon.nickname, True, BLACK)
-            level_text = font.render(f"Level: {pokemon.level}", True, BLACK)
-            cp_text = font.render(f"CP: {pokemon.cp}", True, BLACK)
-            
-            screen.blit(name_text, (x_offset + 60, y_offset + i * 70 + 5))
-            screen.blit(level_text, (x_offset + 60, y_offset + i * 70 + 25))
-            screen.blit(cp_text, (x_offset + 60, y_offset + i * 70 + 45))
-
     def draw_candy_count(candy_count):
         """ Displays candy counter on top right """
         # Draw the candy image
         screen.blit(candy_image, (WIDTH - 70, 10))  # Position near the top-right corner
-        
+
         # Draw the candy count text next to the image
         candy_text = font.render(str(candy_count), True, BLACK)
         screen.blit(candy_text, (WIDTH - 35, 20))  # Position slightly right of the image
@@ -181,11 +223,11 @@ def main(saveFile):
     generateEncounter()
     d = 0
     n = 0
+    pc_box = generate_pc_box(0)
 
     while True:
         screen.fill((0, 0, 0))  # Fill screen with black to clear previous frames
         screen.blit(background_image, (0, 0))
-
         # Render the map
         for row_index, row in enumerate(game_map[playery-5:playery+5]):
             for col_index, tile in enumerate(row[playerx-5:playerx+5]):
@@ -226,15 +268,17 @@ def main(saveFile):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_i]:
             inventoryShowing = True
+            print(saveFile.pokemon_list)
+            print(generate_pc_box(0))
 
         if keys[pygame.K_s]:
             saveFile.save_to_file()
 
-        # show inventory
+        # Handle PC box menu
         if inventoryShowing:
-            draw_inventory(saveFile.pokemon_list)
-
-        inventoryShowing = False
+            if not navigate_pc_menu():
+                inventoryShowing = False  # Exit PC box menu
+            draw_pc_box()
 
         # Draw the candy count in the top-right corner
         draw_candy_count(candy_count)
