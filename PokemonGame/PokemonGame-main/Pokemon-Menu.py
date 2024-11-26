@@ -72,7 +72,7 @@ class GameMenu(tk.Tk):
 
         self.start_button = tk.Button(
             self,
-            text="New Game!",
+            text="Start Game!",
             font=pixel_font,
             fg="yellow",  # Text color
             bg="#355C7D",  # A Pokémon blue/purple color

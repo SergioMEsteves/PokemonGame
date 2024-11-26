@@ -9,8 +9,19 @@ import threading
 import CatchMinigame
 
 def main(saveFile):
+    global candy_count
+
     # Initialize Pygame
     pygame.init()
+
+    print(saveFile.name)
+
+    # Load the Candy image
+    candy_image = pygame.image.load('Pokemon-Assets/Sprites/candy.png')
+    candy_image = pygame.transform.scale(candy_image, (32, 32)) 
+
+    # Track the number of candies
+    candy_count = 10 
 
     # Initialize pygame mixer for background music
     pygame.mixer.init()
@@ -85,12 +96,20 @@ def main(saveFile):
             """
             Starts the catching minigame
             """
+
+            global candy_count
             pygame.mixer.music.stop()
             game = CatchMinigame.PokemonCatchMiniGame(pokemon.nickname.lower())
             game.start_game()
             game.mainloop()
             if game.success:
                 saveFile.append_pokemon(pokemon)
+
+                # This just randomly picks 3, 5, or 10 candies
+                randnum = randint(3, 10)
+                randnum -= randnum%5
+                if randnum == 0: randnum = 3
+                candy_count += randnum
 
     # Function to move the camera
     def move(dx, dy):
@@ -104,6 +123,10 @@ def main(saveFile):
 
     def generateEncounter():
         """ Generates a random pokemon on screen """
+
+        # Check if too many pokemon on screen
+        if len(pokemonOnScreen)>=10: pass
+
         dir_path = './Pokemon-Assets/Sprites/Pokemon/'
         while True:
             pokemon_data = choice(list(POKEMON_DATA.items()))[1]
@@ -113,11 +136,11 @@ def main(saveFile):
                 break
         while True:
             randx = randint(6, 23)
-            randy = randint(6, 10)
+            randy = randint(6, 15)
             if game_map[randy][randx] != 'T':
                 break
         pokemonOnScreen.append([Pokemon(pokemon_data[0].lower()), randx, randy])
-        threading.Timer(30, generateEncounter).start()
+        threading.Timer(5, generateEncounter).start()
 
     def updateN():
         """ Just updates n value for animation """
@@ -144,6 +167,15 @@ def main(saveFile):
             screen.blit(level_text, (x_offset + 60, y_offset + i * 70 + 25))
             screen.blit(cp_text, (x_offset + 60, y_offset + i * 70 + 45))
 
+    def draw_candy_count(candy_count):
+        """ Displays candy counter on top right """
+        # Draw the candy image
+        screen.blit(candy_image, (WIDTH - 70, 10))  # Position near the top-right corner
+        
+        # Draw the candy count text next to the image
+        candy_text = font.render(str(candy_count), True, BLACK)
+        screen.blit(candy_text, (WIDTH - 35, 20))  # Position slightly right of the image
+
     # Game loop
     clock = pygame.time.Clock()
     generateEncounter()
@@ -166,7 +198,8 @@ def main(saveFile):
         # Draw the player (fixed in the center of the screen)
         screen.blit(frames[d][n], player_pos)
 
-        for pokemon, pokex, pokey in pokemonOnScreen:
+        for info in pokemonOnScreen:
+            pokemon, pokex, pokey = info
             screen.blit(pygame.transform.scale(pygame.image.load(f"./Pokemon-Assets/Sprites/Pokemon/{pokemon.nickname.lower()}.png"),
                 (TILE_SIZE, TILE_SIZE)), ((pokex-playerx+5)*TILE_SIZE, (pokey-playery+4)*TILE_SIZE))
 
@@ -174,7 +207,7 @@ def main(saveFile):
             if pokex==playerx and pokey==playery:
                 start_game(pokemon)
                 #pygame.mixer.stop()
-                pokemonOnScreen.pop() # remove pokemon
+                pokemonOnScreen.remove(info) # remove pokemon
                 pygame.mixer.music.load("./Pokemon-Assets/Sounds/Music/Game-Background.mp3")
                 pygame.mixer.music.play(-1)
 
@@ -202,6 +235,9 @@ def main(saveFile):
             draw_inventory(saveFile.pokemon_list)
 
         inventoryShowing = False
+
+        # Draw the candy count in the top-right corner
+        draw_candy_count(candy_count)
 
         # Check if enough time has passed since the last move
         if current_time - last_move_time > COOLDOWN:
