@@ -248,6 +248,7 @@ class PokemonCatchMiniGame(tk.Tk):
                 window=button
             )
             self.success=True
+            return
 
         # If clicked at the wrong time or ran out of Pokéballs
         if self.pokeballs_left <= 0:
@@ -265,6 +266,7 @@ class PokemonCatchMiniGame(tk.Tk):
                 window=button
             )
             self.success=False
+            return
 
         # If the Pokéball count is still > 0, show the remaining count
         if self.pokeballs_left > 0:

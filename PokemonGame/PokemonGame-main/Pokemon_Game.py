@@ -24,7 +24,7 @@ def main(saveFile):
     pokemonOnScreen = []
 
     # Keep track of player's inventory
-    pokemonInInventory = []
+    pokemonInInventory = saveFile.pokemon_list
 
     # Set up display
     WIDTH, HEIGHT = 800, 600
@@ -39,6 +39,7 @@ def main(saveFile):
     # To check valid moves
     playerx=8
     playery=7
+    inventoryShowing = False
 
     # Load the sprite sheet
     sprite_sheet = pygame.image.load("Pokemon-Assets/Sprites/Player-Sprites.png").convert_alpha()  # Use the correct file path
@@ -52,6 +53,11 @@ def main(saveFile):
 
     # Tile size after zoom
     TILE_SIZE = 80
+    LIGHT_BLUE = (100, 200, 255)
+    BLACK = (0, 0, 0)
+    # Define font
+    font = pygame.font.SysFont(None, 24)
+
 
     # Load background image (Make sure the image dimensions match your window)
     background_image = pygame.image.load(
@@ -80,16 +86,16 @@ def main(saveFile):
         else:
             return None  # Default case for unknown symbols
 
-    def start_game(pokeName):
+    def start_game(pokemon):
             """
             Starts the catching minigame
             """
             pygame.mixer.music.stop()
-            game = CatchMinigame.PokemonCatchMiniGame(pokeName)
+            game = CatchMinigame.PokemonCatchMiniGame(pokemon.nickname.lower())
             game.start_game()
             game.mainloop()
             if game.success:
-                pokemonInInventory.append(pokeName)
+                pokemonInInventory.append(pokemon)
 
     # Function to move the camera
     def move(dx, dy):
@@ -120,6 +126,26 @@ def main(saveFile):
         nonlocal n
         n = (n+1)%4
 
+    def draw_inventory(pokemon_list):
+        """ Displays inventory """
+        x_offset = 50
+        y_offset = 100
+        for i, pokemon in enumerate(pokemon_list):
+            # Draw the Pokémon card background
+            pygame.draw.rect(screen, LIGHT_BLUE, (x_offset, y_offset + i * 70, 200, 60))
+            
+            # Draw the sprite
+            screen.blit(pygame.transform.scale(pygame.image.load(f"Pokemon-Assets/Sprites/Pokemon/{pokemon.nickname.lower()}.png"), (50, 50)), (x_offset + 5, y_offset + i * 70 + 5))
+
+            # Draw the text (Name, Level, Combat Power)
+            name_text = font.render(pokemon.nickname, True, BLACK)
+            level_text = font.render(f"Level: {pokemon.level}", True, BLACK)
+            cp_text = font.render(f"CP: {pokemon.cp}", True, BLACK)
+            
+            screen.blit(name_text, (x_offset + 60, y_offset + i * 70 + 5))
+            screen.blit(level_text, (x_offset + 60, y_offset + i * 70 + 25))
+            screen.blit(cp_text, (x_offset + 60, y_offset + i * 70 + 45))
+
     # Game loop
     clock = pygame.time.Clock()
     generateEncounter()
@@ -148,7 +174,7 @@ def main(saveFile):
 
             # check collision
             if pokex==playerx and pokey==playery:
-                start_game(pokemon.nickname.lower())
+                start_game(pokemon)
                 #pygame.mixer.stop()
                 pokemonOnScreen.pop() # remove pokemon
                 pygame.mixer.music.load("./Pokemon-Assets/Sounds/Music/Game-Background.mp3")
@@ -166,10 +192,19 @@ def main(saveFile):
 
         dx, dy = 0, 0
 
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_i]:
+            inventoryShowing = True
+
+        # show inventory
+        if inventoryShowing:
+            draw_inventory(pokemonInInventory)
+
+        inventoryShowing = False
+
         # Check if enough time has passed since the last move
         if current_time - last_move_time > COOLDOWN:
             # Player movement input (camera movement)
-            keys = pygame.key.get_pressed()
             if keys[pygame.K_LEFT]:
                 d = 1
                 dx = -1
