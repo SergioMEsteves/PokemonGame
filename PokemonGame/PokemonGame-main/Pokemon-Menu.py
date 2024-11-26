@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import simpledialog
 import Pokemon_Game
 from TrainerSave import TrainerSave
 from functools import partial
@@ -267,10 +268,37 @@ class GameMenu(tk.Tk):
         """
         Starts the catching minigame
         """
+
+        if not self.selected_save.name:
+            label = tk.Label(self, text="Please enter your username:")
+            username_entry = tk.Entry(self, width=30)
+            # Button to submit the username
+            submit_button = tk.Button(
+                self,
+                text="Submit",
+                command=lambda: self.set_username(username_entry)
+            )
+            
+            input_label = self.canvas.create_window(self.winfo_screenwidth() // 2, int(self.winfo_screenheight() * 0.3), anchor="center", window=label)
+            input_entry = self.canvas.create_window(self.winfo_screenwidth() // 2, int(self.winfo_screenheight() * 0.35), anchor="center", window=username_entry)
+            input_butn = self.canvas.create_window(self.winfo_screenwidth() // 2, int(self.winfo_screenheight() * 0.4), anchor="center", window=submit_button)
+
+        else:
+            pygame.mixer.music.stop()
+            self.quit_game()
+            Pokemon_Game.main(self.selected_save)
+
+    def set_username(self, entry_widget):
+        """
+        Retrieves the username from the entry widget and sets it for the game.
+        """
+        username = entry_widget.get()
+        if username.strip():  # Check if the username is not empty or just spaces
+            self.selected_save.set_save_name(username)
+
         pygame.mixer.music.stop()
         self.quit_game()
         Pokemon_Game.main(self.selected_save)
-
 
     def quit_game(self):
         """

@@ -268,8 +268,6 @@ def main(saveFile):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_i]:
             inventoryShowing = True
-            print(saveFile.pokemon_list)
-            print(generate_pc_box(0))
 
         if keys[pygame.K_s]:
             saveFile.save_to_file()

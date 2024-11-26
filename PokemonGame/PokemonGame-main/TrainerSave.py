@@ -35,7 +35,7 @@ class TrainerSave:
             self.tid = hash(self.creation_datetime)
             self.pokemon_list = []
             self.item_dict = {}
-            self.name = 'None'
+            self.name = None
 
     def set_save_name(self, name):
         '''Sets save file name'''
