@@ -19,6 +19,7 @@ class TrainerSave:
                     else:
                         break
                 self.pokemon_list = pokemon_list
+                self.item_dict = {}
         else:
             self.creation_datetime = datetime.now()
             self.tid = hash(self.creation_datetime)
@@ -38,6 +39,14 @@ class TrainerSave:
     def pokemon_index(self, pid):
         '''Returns the index of the pokemon list for a particular pid'''
         return [p.pid for p in self.pokemon_list].index(pid)
+    
+    def update_candy(self, candy):
+        """ Updates candy count for storage """
+        self.candy_count = candy
+
+    def getCandy(self):
+        """ Returns candy count """
+        return self.candy_count
 
     def release_pokemon(self, pokemon):
         '''Releses a particular pokemon from the pokemon list data'''
@@ -45,5 +54,5 @@ class TrainerSave:
 
     def save_to_file(self):
         with open(f'./Saves/{self.name}.txt', 'w') as f:
-            lines = [','.join([self.name, str(self.tid), str(self.creation_datetime), str(self.candy_count)])] + [','.join([p.pokemon_data[0].lower(), p.nickname, str(p.pid), str(p.creation_datetime), str(p.cp), str(p.level)]) for p in self.pokemon_list] + [''] + [','.join(item) for item in self.item_dict.items()]
+            lines = [','.join([self.name, str(self.tid), str(self.creation_datetime), str(self.candy_count)])] + [','.join([p.pokemon_data[0].lower(), p.nickname, str(p.pid), str(p.creation_datetime), str(p.cp), str(p.level)]) for p in self.pokemon_list]
             f.write('\n'.join(lines))

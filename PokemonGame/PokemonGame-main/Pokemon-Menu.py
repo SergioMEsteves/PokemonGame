@@ -198,11 +198,20 @@ class GameMenu(tk.Tk):
 
         # Add instruction text inside the overlay
         instructions_text = """
-        Welcome to the Pokémon Catching Game!
+        Welcome to the Pokémon!
 
-        1. Use the pulsing ring to catch a Pokémon.
-        2. Click when the ring reaches the optimal size to catch the Pokémon.
-        3. You have a limited number of Pokéballs, so be careful!
+        To get started:
+        Select a save file, then press New Game!
+        For new players, press New Game and input a username for your save file.
+
+        Once you are in the game:
+        Use the arrow keys to move around! 
+        Hold "I" to see the pokemon in your inventory, and press "S" to save your game
+        Run into a pokemon to attempt to catch it!
+
+        To catch a pokemon:
+        Time the pulsing ring so that it matches the gray outline
+        You only have 5 pokeballs, so be careful!
 
         Good luck and have fun!
         """

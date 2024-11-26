@@ -18,6 +18,9 @@ def main(saveFile):
     candy_image = pygame.image.load('Pokemon-Assets/Sprites/candy.png')
     candy_image = pygame.transform.scale(candy_image, (32, 32))
 
+    # Track the number of candies
+    candy_count = saveFile.getCandy()
+
     # Initialize pygame mixer for background music
     pygame.mixer.init()
     pygame.mixer.music.load(
@@ -26,6 +29,7 @@ def main(saveFile):
 
     # Keep track of pokemon
     pokemonOnScreen = []
+    displayInfo = False
 
     # Set up display
     WIDTH, HEIGHT = 800, 600
@@ -56,6 +60,7 @@ def main(saveFile):
     TILE_SIZE = 80
     LIGHT_BLUE = (100, 200, 255)
     BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
     # Define font
     font = pygame.font.SysFont(None, 24)
 
@@ -105,7 +110,7 @@ def main(saveFile):
 
     def draw_pc_box():
         '''Draws the PC box with Pokemon within it'''
-        screen.fill((255, 255, 255))
+        nonlocal displayInfo
         y_offset = 50
         x_offset = 50
         for i in range(BOX_ROW_COUNT):
@@ -122,12 +127,31 @@ def main(saveFile):
 
                 if index == selected_pokemon_index:
                     pygame.draw.rect(screen, (0, 255, 0), rect, 5)
+        if displayInfo:
+            # Select the Pokémon if there is one
+            selected_pokemon = pc_box[selected_pokemon_index]
+            if selected_pokemon:
+                rect = pygame.Rect(WIDTH*0.7-25, HEIGHT*0.1, WIDTH*0.8, HEIGHT*0.6)
+                pygame.draw.rect(screen, WHITE, rect)
+
+                pokemon_sprite = pygame.image.load(
+                        f"Pokemon-Assets/Sprites/Pokemon/{selected_pokemon.pokemon_data[0].lower()}.png")
+                pokemon_sprite = pygame.transform.scale(pokemon_sprite, (TILE_SIZE*3, TILE_SIZE*3))
+                screen.blit(pokemon_sprite, (WIDTH*0.7, HEIGHT*0.1))
+
+                Name_text = font.render(selected_pokemon.nickname, True, BLACK)
+                screen.blit(Name_text, (WIDTH*0.7, HEIGHT*0.5))
+
+                Level_text = font.render(f" Level: {selected_pokemon.level}", True, BLACK)
+                screen.blit(Level_text, (WIDTH*0.7, HEIGHT*0.55))
+
+                CP_text = font.render(f" CP: {selected_pokemon.cp}", True, BLACK)
+                screen.blit(CP_text, (WIDTH*0.7, HEIGHT*0.6))
 
     # Handle movement between PC boxes
     def navigate_pc_menu():
-        nonlocal selected_pokemon_index, current_box_index
+        nonlocal selected_pokemon_index, current_box_index, displayInfo
         keys = pygame.key.get_pressed()
-
         if keys[pygame.K_UP]:
             selected_pokemon_index = (selected_pokemon_index - BOX_COL_COUNT) % BOX_COUNT
         elif keys[pygame.K_DOWN]:
@@ -137,11 +161,10 @@ def main(saveFile):
         elif keys[pygame.K_RIGHT]:
             selected_pokemon_index = (selected_pokemon_index + 1) % BOX_COUNT
         elif keys[pygame.K_RETURN]:
-            # Select the Pokémon if there is one
-            selected_pokemon = pc_box[selected_pokemon_index]
-            if selected_pokemon:
-                print(f"Selected {selected_pokemon.nickname}")
+            displayInfo = True
+                
         elif keys[pygame.K_ESCAPE]:
+            displayInfo = False
             # Exit the PC box and go back to the main game
             return False  # Returning False means the menu should close
         return True
@@ -163,7 +186,10 @@ def main(saveFile):
             """
             Starts the catching minigame
             """
-            nonlocal pc_box
+
+
+            nonlocal candy_count, pc_box
+
             pygame.mixer.music.stop()
             game = CatchMinigame.PokemonCatchMiniGame(pokemon.nickname.lower())
             game.start_game()
@@ -175,8 +201,8 @@ def main(saveFile):
                 randnum = randint(3, 10)
                 randnum -= randnum%5
                 if randnum == 0: randnum = 3
-                saveFile.candy_count += randnum
-                pc_box = generate_pc_box(0)
+                nonlocal candy_count
+                candy_count = str(int(candy_count) + randnum)
 
     def move(dx, dy):
         """ Function to move the camera """
@@ -204,7 +230,7 @@ def main(saveFile):
         while True:
             randx = randint(6, 23)
             randy = randint(6, 15)
-            if game_map[randy][randx] != 'T' and game_map[randy][randx] != 'S':
+            if game_map[randy][randx] != 'T' and game_map[randy][randx] != 'S' and is_walkable(randx,randy):
                 break
         pokemonOnScreen.append([Pokemon(pokemon_data[0].lower()), randx, randy])
         threading.Timer(5, generateEncounter).start()
@@ -214,13 +240,13 @@ def main(saveFile):
         nonlocal n
         n = (n+1)%4
 
-    def draw_candy_count():
+    def draw_candy_count(candy_count):
         """ Displays candy counter on top right """
         # Draw the candy image
         screen.blit(candy_image, (WIDTH - 70, 10))  # Position near the top-right corner
 
         # Draw the candy count text next to the image
-        candy_text = font.render(str(saveFile.candy_count), True, BLACK)
+        candy_text = font.render(str(candy_count), True, BLACK)
         screen.blit(candy_text, (WIDTH - 35, 20))  # Position slightly right of the image
 
     # Game loop
@@ -228,7 +254,6 @@ def main(saveFile):
     generateEncounter()
     d = 0
     n = 0
-    pc_box = generate_pc_box(0)
 
     while True:
         screen.fill((0, 0, 0))  # Fill screen with black to clear previous frames
@@ -271,47 +296,54 @@ def main(saveFile):
         dx, dy = 0, 0
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_i]:
-            inventoryShowing = True
+        
 
         if keys[pygame.K_s]:
+            saveFile.update_candy(candy_count)
             saveFile.save_to_file()
 
-        # Handle PC box menu
-        if inventoryShowing:
-            if not navigate_pc_menu():
-                inventoryShowing = False  # Exit PC box menu
-            draw_pc_box()
-
+        
         # Draw the candy count in the top-right corner
-        draw_candy_count()
+        draw_candy_count(candy_count)
 
         # Check if enough time has passed since the last move
         if current_time - last_move_time > COOLDOWN:
-            # Player movement input (camera movement)
-            if keys[pygame.K_LEFT]:
-                d = 1
-                dx = -1
-                last_move_time = current_time  # Update the last move time
-                updateN()
-            if keys[pygame.K_RIGHT]:
-                d = 2
-                dx = 1
-                last_move_time = current_time
-                updateN()
-            if keys[pygame.K_UP]:
-                d = 3
-                dy = -1
-                last_move_time = current_time
-                updateN()
-            if keys[pygame.K_DOWN]:
-                d = 0
-                dy = 1
-                last_move_time = current_time
-                updateN()
+            if keys[pygame.K_i]:
+                inventoryShowing = True
 
-            if is_walkable(playerx+dx, playery+dy):
-                move(dx, dy)
+            # Handle PC box menu
+            if inventoryShowing:
+                if current_time - last_move_time > COOLDOWN*5:
+                    if not navigate_pc_menu():
+                        inventoryShowing = False  # Exit PC box menu
+            else:
+                # Player movement input (camera movement)
+                if keys[pygame.K_LEFT]:
+                    d = 1
+                    dx = -1
+                    last_move_time = current_time  # Update the last move time
+                    updateN()
+                if keys[pygame.K_RIGHT]:
+                    d = 2
+                    dx = 1
+                    last_move_time = current_time
+                    updateN()
+                if keys[pygame.K_UP]:
+                    d = 3
+                    dy = -1
+                    last_move_time = current_time
+                    updateN()
+                if keys[pygame.K_DOWN]:
+                    d = 0
+                    dy = 1
+                    last_move_time = current_time
+                    updateN()
 
+                if is_walkable(playerx+dx, playery+dy):
+                    move(dx, dy)
+
+        if inventoryShowing:
+            pc_box = generate_pc_box(0)
+            draw_pc_box()
         pygame.display.update()  # Update the display
         clock.tick(60)  # Set the frame rate to 60 FPS
