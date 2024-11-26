@@ -1,5 +1,7 @@
 import tkinter as tk
 import Pokemon_Game
+from TrainerSave import TrainerSave
+import os
 try: # Ensuring installation
     from PIL import Image, ImageTk, ImageEnhance
 except ImportError:
@@ -50,6 +52,8 @@ class GameMenu(tk.Tk):
         self.title = ImageTk.PhotoImage(self.title_image)
 
         pixel_font = ("Press Start 2P", 14) # Doesn't actually work just sets sizes for buttons.
+
+        self.selected_save = TrainerSave()
 
         self.saves_button = tk.Button(
             self,
@@ -226,15 +230,11 @@ class GameMenu(tk.Tk):
             0, 0, self.winfo_screenwidth(), self.winfo_screenheight(),
             fill="black", stipple="gray50"  # Stipple creates a pattern effect to simulate transparency
         )
-
-        # Add instruction text inside the overlay
-        saves_text = """
-                Save DATA
-                """
-
-        label = tk.Label(self.saves_overlay, text=saves_text, font=("Arial", 18), bg="black", fg="white",
-                         justify="left", padx=20, pady=20)
-        label.pack()
+        saves = self.load_saves()
+        for save in saves:
+            save_button = tk.Button(self.saves_overlay, text=save.name, font=("Arial", 14), fg="black",
+                                 command=lambda: self.select_save(save))
+            save_button.pack(padx=10, pady=10, anchor='center')
 
         # Add Close button (X) to dismiss the overlay
         close_button = tk.Button(self.saves_overlay, text="X", font=("Arial", 14), fg="red",
@@ -242,7 +242,18 @@ class GameMenu(tk.Tk):
         close_button.pack(padx=10, pady=10, anchor="ne")
 
     def load_saves(selfs):
-        pass
+        path = './Saves/'
+        return [TrainerSave(path + f) for f in os.listdir(path)]
+
+    def loadPokemonData(filePath='PokeList_v3.csv'):
+        with open(filePath, 'r') as csv:
+            lines = csv.readlines()
+            data = dict([(l.split(',')[1], tuple([e.strip() for e in l.split(',')[1:]])) for l in lines])
+        return data
+
+    def select_save(self, save):
+        self.selected_save = save
+        self.close_saves()
 
     def close_saves(self):
         """Close the saves overlay."""
@@ -256,7 +267,7 @@ class GameMenu(tk.Tk):
         """
         pygame.mixer.music.stop()
         self.quit_game()
-        Pokemon_Game.main()
+        Pokemon_Game.main(self.selected_save)
 
 
     def quit_game(self):
