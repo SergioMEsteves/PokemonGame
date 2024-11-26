@@ -1,15 +1,16 @@
 from datetime import datetime
 from random import randint
+from PokemonData import POKEMON_DATA
 
 class Pokemon:
     _exp = 0
     MAX_LEVEL = 40
     DOUBLE_CANDY_THRESHOLD = 31
 
-    def __init__(self, pokemon_data, nickname = None, pid = None, cp = None, level = None):
-        self.pokemon_data = pokemon_data
-        self.nickname = nickname if nickname else pokemon_data.name
-        self.creation_datetime = datetime.now()
+    def __init__(self, pokemon_name, nickname = None, pid = None, creationTime = None, cp = None, level = None):
+        self.pokemon_data = POKEMON_DATA[pokemon_name]
+        self.nickname = nickname if nickname else pokemon_name
+        self.creation_datetime = creationTime if creationTime else datetime.now()
         #self.pid = hash(str(self.creation_datetime) + pokemon_data.name)
         self.cp = cp if cp else randint(pokemon_data.minCP, pokemon_data.maxCP)
         self.level = level if level else 1

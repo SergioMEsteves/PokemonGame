@@ -12,19 +12,24 @@ class TrainerSave:
             with open(filePath, 'r') as save_file:
                 self.name, self.tid, self.creation_datetime = save_file.readline().strip().split(',')
 
-                line = save_file.readline()
                 pokemon_list = []
-                while line:
-                    pokemon_list.append(Pokemon.from_string(line.strip()))
+                while True:
                     line = save_file.readline()
+                    if line.strip():
+                        pokemon_list.append(Pokemon.from_string(line.strip()))
+                    else:
+                        break
 
-
-                line = save_file.readline()
                 item_dict = {}
                 while line:
-                    split = line.split(',')
-                    item_dict[split[0]] = split[1]
                     line = save_file.readline()
+                    if line.strip():
+                        split = line.split(',')
+                        item_dict[split[0]] = split[1]
+                    else:
+                        break
+                self.pokemon_list = pokemon_list
+                self.item_dict = item_dict
         else:
             self.creation_datetime = datetime.now()
             self.tid = hash(self.creation_datetime)

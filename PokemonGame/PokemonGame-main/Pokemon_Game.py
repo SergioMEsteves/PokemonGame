@@ -2,12 +2,16 @@ import pygame
 import sys
 from random import randint
 from Pokemon import Pokemon
+from PokemonData import POKEMON_DATA
+from TrainerSave import TrainerSave
 import threading
 import CatchMinigame
 
-def main():
+def main(saveFile):
     # Initialize Pygame
     pygame.init()
+
+    print(saveFile.name)
 
     # Initialize pygame mixer for background music
     pygame.mixer.init()
@@ -110,7 +114,7 @@ def main():
             while game_map[randy][randx] != "0":
                 randx = randint(6, 23)
                 randy = randint(6, 10)
-            pokemonOnScreen.append([Pokemon(None, pokeInfo[1], pokeInfo[2], pokeInfo[3]), randx, randy])
+            pokemonOnScreen.append([Pokemon(, pokeInfo[1], pokeInfo[2], pokeInfo[3]), randx, randy])
         threading.Timer(30, generateEncounter).start()
 
     def updateN():
