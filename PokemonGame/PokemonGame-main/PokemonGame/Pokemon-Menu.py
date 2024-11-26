@@ -217,21 +217,44 @@ class GameMenu(tk.Tk):
     def show_saves(self):
         if self.saves_overlay:
             return
+        self.saves_overlay = tk.Canvas(self, bg="black", width=self.winfo_screenwidth(),
+                                              height=self.winfo_screenheight())
+        self.saves_overlay.place(x=0, y=0)
 
+        # Add a semi-transparent rectangle to simulate transparency
+        self.saves_overlay.create_rectangle(
+            0, 0, self.winfo_screenwidth(), self.winfo_screenheight(),
+            fill="black", stipple="gray50"  # Stipple creates a pattern effect to simulate transparency
+        )
+
+        # Add instruction text inside the overlay
+        saves_text = """
+                Save DATA
+                """
+
+        label = tk.Label(self.saves_overlay, text=saves_text, font=("Arial", 18), bg="black", fg="white",
+                         justify="left", padx=20, pady=20)
+        label.pack()
+
+        # Add Close button (X) to dismiss the overlay
+        close_button = tk.Button(self.saves_overlay, text="X", font=("Arial", 14), fg="red",
+                                 command=self.close_saves)
+        close_button.pack(padx=10, pady=10, anchor="ne")
 
     def load_saves(selfs):
         pass
+
+    def close_saves(self):
+        """Close the saves overlay."""
+        if self.saves_overlay:
+            self.saves_overlay.destroy()
+            self.saves_overlay = None
 
     def start_game(self):
         """
         Starts the catching minigame
         """
         pygame.mixer.music.stop()
-        
-        # FIXME Menu should close when the main game begins
-
-        # Call the Pokémon Catching Minigame script
-        subprocess.run(["python", "Pokemon-Game.py"])  # Runs the minigame file
 
     def quit_game(self):
         """
@@ -248,10 +271,11 @@ class GameMenu(tk.Tk):
 
         # Keep a reference to the image to prevent garbage collection
         self.canvas.image = self.title
-        
+
+        saves_button_window = self.canvas.create_window(self.winfo_screenwidth() // 2, int(self.winfo_screenheight() * 0.45), anchor="center", window=self.saves_button)
         start_button_window = self.canvas.create_window(self.winfo_screenwidth() // 2, self.winfo_screenheight() // 2, anchor="center", window=self.start_button)
-        quit_button_window = self.canvas.create_window(self.winfo_screenwidth() // 2, int(self.winfo_screenheight() * 0.7), anchor="center", window=self.quit_button)
-        instructions_button_window = self.canvas.create_window(self.winfo_screenwidth() // 2, int(self.winfo_screenheight() * 0.6), anchor="center", window=self.instructions_button)
+        quit_button_window = self.canvas.create_window(self.winfo_screenwidth() // 2, int(self.winfo_screenheight() * 0.6), anchor="center", window=self.quit_button)
+        instructions_button_window = self.canvas.create_window(self.winfo_screenwidth() // 2, int(self.winfo_screenheight() * 0.55), anchor="center", window=self.instructions_button)
 
 # Start the menu
 if __name__ == "__main__":
