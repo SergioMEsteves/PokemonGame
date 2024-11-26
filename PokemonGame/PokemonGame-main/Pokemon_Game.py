@@ -32,9 +32,6 @@ def main(saveFile):
     # Keep track of pokemon
     pokemonOnScreen = []
 
-    # Keep track of player's inventory
-    pokemonInInventory = saveFile.pokemon_list
-
     # Set up display
     WIDTH, HEIGHT = 800, 600
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -106,7 +103,7 @@ def main(saveFile):
             game.start_game()
             game.mainloop()
             if game.success:
-                pokemonInInventory.append(pokemon)
+                saveFile.append_pokemon(pokemon)
 
                 # This just randomly picks 3, 5, or 10 candies
                 randnum = randint(3, 10)
@@ -137,8 +134,11 @@ def main(saveFile):
                 pokemon_data = choice(list(POKEMON_DATA.items()))[1]
             else:
                 break
-        randx = randint(6, 23)
-        randy = randint(6, 15)
+        while True:
+            randx = randint(6, 23)
+            randy = randint(6, 15)
+            if game_map[randy][randx] != 'T':
+                break
         pokemonOnScreen.append([Pokemon(pokemon_data[0].lower()), randx, randy])
         threading.Timer(5, generateEncounter).start()
 
@@ -227,9 +227,12 @@ def main(saveFile):
         if keys[pygame.K_i]:
             inventoryShowing = True
 
+        if keys[pygame.K_s]:
+            saveFile.save_to_file()
+
         # show inventory
         if inventoryShowing:
-            draw_inventory(pokemonInInventory)
+            draw_inventory(saveFile.pokemon_list)
 
         inventoryShowing = False
 

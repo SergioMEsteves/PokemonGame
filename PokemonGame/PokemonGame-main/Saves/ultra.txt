@@ -1,8 +1,0 @@
-Ultra,tid,creationtime
-squirtle,nickname,pid,creationtime,cp,level
-bulbasaur,nickname,pid,creationtime,cp,level
-charmander,nickname,pid,creationtime,cp,level
-weedle,nickname,pid,creationtime,cp,level
-
-item,count
-item,count

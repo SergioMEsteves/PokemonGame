@@ -35,7 +35,7 @@ class TrainerSave:
             self.tid = hash(self.creation_datetime)
             self.pokemon_list = []
             self.item_dict = {}
-            self.name = None
+            self.name = 'None'
 
     def set_save_name(self, name):
         '''Sets save file name'''
@@ -52,3 +52,8 @@ class TrainerSave:
     def release_pokemon(self, pokemon):
         '''Releses a particular pokemon from the pokemon list data'''
         self.pokemon_list.pop(self.pokemon_index(pokemon.pid))
+
+    def save_to_file(self):
+        with open(f'./Saves/{self.name}.txt', 'w') as f:
+            lines = [','.join([self.name, str(self.tid), str(self.creation_datetime)])] + [','.join([p.pokemon_data[0].lower(), p.nickname, str(p.pid), str(p.creation_datetime), str(p.cp), str(p.level)]) for p in self.pokemon_list] + [''] + [','.join(item) for item in self.item_dict.items()]
+            f.write('\n'.join(lines))
