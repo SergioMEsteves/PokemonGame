@@ -11,7 +11,7 @@ class Pokemon:
         self.pokemon_data = POKEMON_DATA[pokemon_name]
         self.nickname = nickname if nickname else pokemon_name
         self.creation_datetime = creationTime if creationTime else datetime.now()
-        #self.pid = hash(str(self.creation_datetime) + pokemon_data.name)
+        self.pid = hash(str(self.creation_datetime) + self.pokemon_data[0])
         self.cp = cp if cp else randint(int(self.pokemon_data[1]), int(self.pokemon_data[2]))
         self.level = level if level else 1
 

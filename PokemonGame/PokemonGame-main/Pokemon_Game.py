@@ -12,8 +12,6 @@ def main(saveFile):
     # Initialize Pygame
     pygame.init()
 
-    print(saveFile.name)
-
     # Initialize pygame mixer for background music
     pygame.mixer.init()
     pygame.mixer.music.load(
@@ -22,9 +20,6 @@ def main(saveFile):
 
     # Keep track of pokemon
     pokemonOnScreen = []
-
-    # Keep track of player's inventory
-    pokemonInInventory = saveFile.pokemon_list
 
     # Set up display
     WIDTH, HEIGHT = 800, 600
@@ -95,7 +90,7 @@ def main(saveFile):
             game.start_game()
             game.mainloop()
             if game.success:
-                pokemonInInventory.append(pokemon)
+                saveFile.append_pokemon(pokemon)
 
     # Function to move the camera
     def move(dx, dy):
@@ -116,8 +111,11 @@ def main(saveFile):
                 pokemon_data = choice(list(POKEMON_DATA.items()))[1]
             else:
                 break
-        randx = randint(6, 23)
-        randy = randint(6, 10)
+        while True:
+            randx = randint(6, 23)
+            randy = randint(6, 10)
+            if game_map[randy][randx] != 'T':
+                break
         pokemonOnScreen.append([Pokemon(pokemon_data[0].lower()), randx, randy])
         threading.Timer(30, generateEncounter).start()
 
@@ -135,7 +133,7 @@ def main(saveFile):
             pygame.draw.rect(screen, LIGHT_BLUE, (x_offset, y_offset + i * 70, 200, 60))
             
             # Draw the sprite
-            screen.blit(pygame.transform.scale(pygame.image.load(f"Pokemon-Assets/Sprites/Pokemon/{pokemon.nickname.lower()}.png"), (50, 50)), (x_offset + 5, y_offset + i * 70 + 5))
+            screen.blit(pygame.transform.scale(pygame.image.load(f"Pokemon-Assets/Sprites/Pokemon/{pokemon.pokemon_data[0].lower()}.png"), (50, 50)), (x_offset + 5, y_offset + i * 70 + 5))
 
             # Draw the text (Name, Level, Combat Power)
             name_text = font.render(pokemon.nickname, True, BLACK)
@@ -196,9 +194,12 @@ def main(saveFile):
         if keys[pygame.K_i]:
             inventoryShowing = True
 
+        if keys[pygame.K_s]:
+            saveFile.save_to_file()
+
         # show inventory
         if inventoryShowing:
-            draw_inventory(pokemonInInventory)
+            draw_inventory(saveFile.pokemon_list)
 
         inventoryShowing = False
 

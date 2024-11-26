@@ -1,6 +1,7 @@
 import tkinter as tk
 import Pokemon_Game
 from TrainerSave import TrainerSave
+from functools import partial
 import os
 try: # Ensuring installation
     from PIL import Image, ImageTk, ImageEnhance
@@ -233,7 +234,7 @@ class GameMenu(tk.Tk):
         saves = self.load_saves()
         for save in saves:
             save_button = tk.Button(self.saves_overlay, text=save.name, font=("Arial", 14), fg="black",
-                                 command=lambda: self.select_save(save))
+                                 command=partial(self.select_save, save))
             save_button.pack(padx=10, pady=10, anchor='center')
 
         # Add Close button (X) to dismiss the overlay
@@ -243,7 +244,7 @@ class GameMenu(tk.Tk):
 
     def load_saves(selfs):
         path = './Saves/'
-        return [TrainerSave(path + f) for f in os.listdir(path)]
+        return [TrainerSave(path + f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
 
     def loadPokemonData(filePath='PokeList_v3.csv'):
         with open(filePath, 'r') as csv:
@@ -252,6 +253,7 @@ class GameMenu(tk.Tk):
         return data
 
     def select_save(self, save):
+        print(save.name)
         self.selected_save = save
         self.close_saves()
 

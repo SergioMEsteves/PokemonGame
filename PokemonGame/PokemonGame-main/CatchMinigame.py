@@ -17,7 +17,7 @@ except ImportError:
     import pygame
 
 class PokemonCatchMiniGame(tk.Tk):
-    tolerance = 10 # CHANGE AS NEEDED ; impacts how easy it is to win the minigame
+    tolerance = 100 # CHANGE AS NEEDED ; impacts how easy it is to win the minigame
 
     def __init__(self, pokeName):
         super().__init__()
