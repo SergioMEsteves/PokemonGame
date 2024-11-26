@@ -9,8 +9,6 @@ import threading
 import CatchMinigame
 
 def main(saveFile):
-    global candy_count
-
     # Initialize Pygame
     pygame.init()
 
@@ -74,6 +72,14 @@ def main(saveFile):
         "./Pokemon-Assets/Sprites/tree.png")
     tree_image = pygame.transform.scale(tree_image, (TILE_SIZE, TILE_SIZE))
 
+    grass_image = pygame.image.load(
+        "./Pokemon-Assets/Sprites/grass.png")
+    grass_image = pygame.transform.scale(grass_image, (TILE_SIZE, TILE_SIZE))
+
+    stone_image = pygame.image.load(
+        "./Pokemon-Assets/Sprites/stone.png")
+    stone_image = pygame.transform.scale(stone_image, (TILE_SIZE, TILE_SIZE))
+
     # Player setup (fixed position in the center of the screen)
     player_pos = [WIDTH // 2, HEIGHT // 2]  # Center player on screen (50 is half the player's width/height)
 
@@ -83,12 +89,14 @@ def main(saveFile):
 
     # Function to get the image for a tile type
     def get_tile_image(tile_type):
+        """ Returns an image for the type of object in that position. """
+
         if tile_type == 'G':
-            return "grass_image"
+            return grass_image
         elif tile_type == 'T':
             return tree_image
-        elif tile_type == 'B':
-            return "building_image"
+        elif tile_type == 'S':
+            return stone_image
         else:
             return None  # Default case for unknown symbols
 
@@ -97,7 +105,6 @@ def main(saveFile):
             Starts the catching minigame
             """
 
-            global candy_count
             pygame.mixer.music.stop()
             game = CatchMinigame.PokemonCatchMiniGame(pokemon.nickname.lower())
             game.start_game()
@@ -109,17 +116,18 @@ def main(saveFile):
                 randnum = randint(3, 10)
                 randnum -= randnum%5
                 if randnum == 0: randnum = 3
+                nonlocal candy_count
                 candy_count += randnum
 
-    # Function to move the camera
     def move(dx, dy):
+        """ Function to move the camera """
         nonlocal playerx, playery
         playerx+=dx
         playery+=dy
 
-    # Function to check if a tile is walkable.
     def is_walkable(x, y):
-        return game_map[y-1][x]=="0"
+        """ Function to check if a tile is walkable. """
+        return game_map[y-1][x]=="0"or game_map[y-1][x]=="G"
 
     def generateEncounter():
         """ Generates a random pokemon on screen """
@@ -137,7 +145,7 @@ def main(saveFile):
         while True:
             randx = randint(6, 23)
             randy = randint(6, 15)
-            if game_map[randy][randx] != 'T':
+            if game_map[randy][randx] != 'T' and game_map[randy][randx] != 'S':
                 break
         pokemonOnScreen.append([Pokemon(pokemon_data[0].lower()), randx, randy])
         threading.Timer(5, generateEncounter).start()
