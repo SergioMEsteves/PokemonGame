@@ -274,9 +274,9 @@ class GameMenu(tk.Tk):
 
         # Keep a reference to the image to prevent garbage collection
         self.canvas.image = self.title
-
-        saves_button_window = self.canvas.create_window(self.winfo_screenwidth() // 2, int(self.winfo_screenheight() * 0.45), anchor="center", window=self.saves_button)
-        start_button_window = self.canvas.create_window(self.winfo_screenwidth() // 2, self.winfo_screenheight() // 2, anchor="center", window=self.start_button)
+        
+        start_button_window = self.canvas.create_window(self.winfo_screenwidth() // 2, int(self.winfo_screenheight() * 0.45), anchor="center", window=self.start_button)
+        saves_button_window = self.canvas.create_window(self.winfo_screenwidth() // 2, int(self.winfo_screenheight() * 0.5), anchor="center", window=self.saves_button)
         quit_button_window = self.canvas.create_window(self.winfo_screenwidth() // 2, int(self.winfo_screenheight() * 0.6), anchor="center", window=self.quit_button)
         instructions_button_window = self.canvas.create_window(self.winfo_screenwidth() // 2, int(self.winfo_screenheight() * 0.55), anchor="center", window=self.instructions_button)
 
