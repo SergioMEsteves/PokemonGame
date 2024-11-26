@@ -1,6 +1,7 @@
 import pygame
 import sys
-from random import randint
+import os
+from random import randint, choice
 from Pokemon import Pokemon
 from PokemonData import POKEMON_DATA
 from TrainerSave import TrainerSave
@@ -102,19 +103,16 @@ def main(saveFile):
 
     def generateEncounter():
         """ Generates a random pokemon on screen """
-        randomNum = randint(0, 15)
-        with open("PokeList_v3.csv") as file:
-            pokeInfo = file.readlines()[randomNum].strip().split(",")
-            randx = randint(6, 23)
-            randy = randint(6, 10)
-            for pokemon in pokemonOnScreen:
-                if pokemon[1]==randx and pokemon[2]==randy:
-                    randx = randint(6, 23)
-                    randy = randint(6, 10)
-            while game_map[randy][randx] != "0":
-                randx = randint(6, 23)
-                randy = randint(6, 10)
-            pokemonOnScreen.append([Pokemon(, pokeInfo[1], pokeInfo[2], pokeInfo[3]), randx, randy])
+        dir_path = './Pokemon-Assets/Sprites/Pokemon/'
+        while True:
+            pokemon_data = choice(list(POKEMON_DATA.items()))[1]
+            if not os.path.exists(dir_path + f'{pokemon_data[0]}.png'):
+                pokemon_data = choice(list(POKEMON_DATA.items()))[1]
+            else:
+                break
+        randx = randint(6, 23)
+        randy = randint(6, 10)
+        pokemonOnScreen.append([Pokemon(pokemon_data[0].lower()), randx, randy])
         threading.Timer(30, generateEncounter).start()
 
     def updateN():
