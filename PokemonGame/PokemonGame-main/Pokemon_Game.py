@@ -19,7 +19,7 @@ def main(saveFile):
     candy_image = pygame.transform.scale(candy_image, (32, 32))
 
     # Track the number of candies
-    candy_count = 10
+    candy_count = saveFile.getCandy()
 
     # Initialize pygame mixer for background music
     pygame.mixer.init()
@@ -299,6 +299,7 @@ def main(saveFile):
         
 
         if keys[pygame.K_s]:
+            saveFile.update_candy(candy_count)
             saveFile.save_to_file()
 
         
