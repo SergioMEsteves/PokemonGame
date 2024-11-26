@@ -3,15 +3,14 @@ from random import randint
 from datetime import datetime
 from Pokemon import Pokemon
 
-PokemonData = namedtuple('PokemonData', ['name', 'minCP', 'maxCP', 'evoString'])
+PokemonData = namedtuple('PokemonData', ['name', 'minCP', 'maxCP'])
 
 class TrainerSave:
 
     def __init__(self, filePath = None):
         if filePath:
             with open(filePath, 'r') as save_file:
-                self.name, self.tid, self.creation_datetime = save_file.readline().strip().split(',')
-
+                self.name, self.tid, self.creation_datetime, self.candy_count = save_file.readline().strip().split(',')
                 pokemon_list = []
                 while True:
                     line = save_file.readline()
@@ -19,20 +18,11 @@ class TrainerSave:
                         pokemon_list.append(Pokemon.from_string(line.strip()))
                     else:
                         break
-
-                item_dict = {}
-                while line:
-                    line = save_file.readline()
-                    if line.strip():
-                        split = line.split(',')
-                        item_dict[split[0]] = split[1]
-                    else:
-                        break
                 self.pokemon_list = pokemon_list
-                self.item_dict = item_dict
         else:
             self.creation_datetime = datetime.now()
             self.tid = hash(self.creation_datetime)
+            self.candy_count = 10
             self.pokemon_list = []
             self.item_dict = {}
             self.name = None
@@ -55,5 +45,5 @@ class TrainerSave:
 
     def save_to_file(self):
         with open(f'./Saves/{self.name}.txt', 'w') as f:
-            lines = [','.join([self.name, str(self.tid), str(self.creation_datetime)])] + [','.join([p.pokemon_data[0].lower(), p.nickname, str(p.pid), str(p.creation_datetime), str(p.cp), str(p.level)]) for p in self.pokemon_list] + [''] + [','.join(item) for item in self.item_dict.items()]
+            lines = [','.join([self.name, str(self.tid), str(self.creation_datetime), str(self.candy_count)])] + [','.join([p.pokemon_data[0].lower(), p.nickname, str(p.pid), str(p.creation_datetime), str(p.cp), str(p.level)]) for p in self.pokemon_list] + [''] + [','.join(item) for item in self.item_dict.items()]
             f.write('\n'.join(lines))

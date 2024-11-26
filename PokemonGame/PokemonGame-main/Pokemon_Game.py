@@ -9,10 +9,6 @@ import threading
 import CatchMinigame
 
 def main(saveFile):
-<<<<<<< HEAD
-
-=======
->>>>>>> 3868b610f25f21596376b8d9158b293229a73ef6
     # Initialize Pygame
     pygame.init()
 
@@ -21,9 +17,6 @@ def main(saveFile):
     # Load the Candy image
     candy_image = pygame.image.load('Pokemon-Assets/Sprites/candy.png')
     candy_image = pygame.transform.scale(candy_image, (32, 32))
-
-    # Track the number of candies
-    candy_count = 10
 
     # Initialize pygame mixer for background music
     pygame.mixer.init()
@@ -170,11 +163,7 @@ def main(saveFile):
             """
             Starts the catching minigame
             """
-
-<<<<<<< HEAD
-            nonlocal candy_count, pc_box
-=======
->>>>>>> 3868b610f25f21596376b8d9158b293229a73ef6
+            nonlocal pc_box
             pygame.mixer.music.stop()
             game = CatchMinigame.PokemonCatchMiniGame(pokemon.nickname.lower())
             game.start_game()
@@ -186,8 +175,7 @@ def main(saveFile):
                 randnum = randint(3, 10)
                 randnum -= randnum%5
                 if randnum == 0: randnum = 3
-                nonlocal candy_count
-                candy_count += randnum
+                saveFile.candy_count += randnum
                 pc_box = generate_pc_box(0)
 
     def move(dx, dy):
@@ -226,13 +214,13 @@ def main(saveFile):
         nonlocal n
         n = (n+1)%4
 
-    def draw_candy_count(candy_count):
+    def draw_candy_count():
         """ Displays candy counter on top right """
         # Draw the candy image
         screen.blit(candy_image, (WIDTH - 70, 10))  # Position near the top-right corner
 
         # Draw the candy count text next to the image
-        candy_text = font.render(str(candy_count), True, BLACK)
+        candy_text = font.render(str(saveFile.candy_count), True, BLACK)
         screen.blit(candy_text, (WIDTH - 35, 20))  # Position slightly right of the image
 
     # Game loop
@@ -296,7 +284,7 @@ def main(saveFile):
             draw_pc_box()
 
         # Draw the candy count in the top-right corner
-        draw_candy_count(candy_count)
+        draw_candy_count()
 
         # Check if enough time has passed since the last move
         if current_time - last_move_time > COOLDOWN:
